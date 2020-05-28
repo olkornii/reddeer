@@ -12,7 +12,11 @@
 package org.eclipse.reddeer.core.handler;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.reddeer.common.util.Display;
 import org.eclipse.reddeer.common.util.ResultRunnable;
 import org.eclipse.reddeer.core.exception.CoreLayerException;
@@ -24,6 +28,9 @@ import org.eclipse.reddeer.core.exception.CoreLayerException;
  *
  */
 public class ListHandler extends ControlHandler{
+	
+	private Rectangle rectangle = null;
+	private int itemIndex = -1;
 	
 	private static ListHandler instance;
 	
@@ -262,5 +269,51 @@ public class ListHandler extends ControlHandler{
 		} else {
 			return new int[0];
 		}
+	}
+
+	public void click(List swtWidget, String listItem) { // add comment
+		
+		Display.syncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				
+//				swtWidget.indexOf("Kubernetes");
+//				System.out.println(swtWidget.indexOf("Kubernetes"));
+				rectangle = swtWidget.getDisplay().getBounds(); // 16 items
+				itemIndex = swtWidget.indexOf(listItem);
+				int x = rectangle.width/2;
+				int y = ((rectangle.height/16)*itemIndex)+((rectangle.height/16)/2);
+//				swtWidget.getItems();
+//				Point point = swtWidget.getDisplay().getDPI();
+				notifyItemMouse(SWT.MouseDoubleClick, 0, swtWidget, null, x, y, 1);
+				
+				
+//				Event e = createEvent(swtWidget);
+//				e.x = rectangle.width/2; // here will be a coordinate of "Kubernetes"
+//				e.y = (rectangle.height/16)/2;
+//				WidgetHandler.getInstance().notifyWidget(SWT.MouseDoubleClick, e, swtWidget);
+//				notifyItemMouse(SWT.MouseDoubleClick, SWT.NONE, swtWidget.getParent(), swtWidget, rectangle.width/2, (rectangle.height/16)/2, 1);
+			}
+		});
+		
+		
+		notifyItemMouse(SWT.MouseDoubleClick, 0, swtWidget, null, rectangle.width/2, (rectangle.height/16)/2, 1);
+		
+		Rectangle my_new_rect = rectangle;
+		int my_item_index = itemIndex;
+	}
+	
+	private static Event createEvent(List swtWidget) {
+		Event event = new Event();
+		event.time = (int) System.currentTimeMillis();
+		event.widget = swtWidget;
+		event.display = Display.getDisplay();
+		event.type = SWT.MouseDoubleClick;
+		event.button = 1;
+		if(event.type == SWT.MouseDoubleClick){
+			event.count=2;
+		}
+		return event;
 	}
 }
