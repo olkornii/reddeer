@@ -30,7 +30,11 @@ import org.eclipse.reddeer.core.exception.CoreLayerException;
 public class ListHandler extends ControlHandler{
 	
 	private Rectangle rectangle = null;
+	private Rectangle rectangle_parent = null;
+	private Rectangle rectangle_client_area = null;
+	private Rectangle rectangle_display = null;
 	private int itemIndex = -1;
+	private Point test_point;
 	
 	private static ListHandler instance;
 	
@@ -271,8 +275,7 @@ public class ListHandler extends ControlHandler{
 		}
 	}
 
-	public void click(List swtWidget, String listItem) { // add comment
-		
+	public void click(final List swtWidget,final String listItem) { // add comment
 		Display.syncExec(new Runnable() {
 
 			@Override
@@ -280,16 +283,61 @@ public class ListHandler extends ControlHandler{
 				
 //				swtWidget.indexOf("Kubernetes");
 //				System.out.println(swtWidget.indexOf("Kubernetes"));
-				rectangle = swtWidget.getDisplay().getBounds(); // 16 items
-				itemIndex = swtWidget.indexOf(listItem);
-				int x = rectangle.width/2;
-				int y = ((rectangle.height/16)*itemIndex)+((rectangle.height/16)/2);
+				
+				rectangle = swtWidget.getDisplay().getBounds(); // 16 items -------- not the List but the window or something else
+				test_point = swtWidget.getLocation();
+				rectangle_client_area = swtWidget.getClientArea();
+				rectangle = swtWidget.getBounds();
+				rectangle_parent = swtWidget.getParent().getBounds();
+				rectangle_display = Display.getDisplay().getBounds();
+				
+//				itemIndex = swtWidget.indexOf(listItem);
+//				itemIndex = swtWidget.indexOf("OpenShift");
+//				int x = rectangle.width/2;
+//				int y = ((rectangle.height/16)*itemIndex)+((rectangle.height/16)/2);
+//				swtWidget.select(itemIndex);
+//				swtWidget.select();
 //				swtWidget.getItems();
 //				Point point = swtWidget.getDisplay().getDPI();
-				notifyItemMouse(SWT.MouseDoubleClick, 0, swtWidget, null, x, y, 1);
+				
+				int x = 555;
+				int y = 450;
+				
+//				int x = my_point.x + 5;
+//				int y = my_point.y + 55;
+				
+				WidgetHandler.getInstance().notifyItemMouse(SWT.MouseDoubleClick, SWT.NONE, swtWidget, null, x, y, 1);
+//				WidgetHandler.getInstance().sendClickNotifications(swtWidget);
+//				WidgetHandler.getInstance().notifyItemMouse(SWT.MouseDown, SWT.NONE, swtWidget, null, x, y, 1);
+//				WidgetHandler.getInstance().notifyItemMouse(SWT.MouseUp, SWT.NONE, swtWidget, null, x, y, 1);
+				
+				notifyItemMouse(SWT.MouseDoubleClick, SWT.NONE, swtWidget, null, x, y, 1);
+//				sendClickNotifications(swtWidget);
+				
+//				notifyItemMouse(SWT.MouseMove, SWT.NONE, swtWidget, null, x, y, 0);
+				
+//				notifyItemMouse(SWT.MouseDown, SWT.NONE, swtWidget, null, x, y, 1);
+//				notifyItemMouse(SWT.MouseUp, SWT.NONE, swtWidget, null, x, y, 1);
+				
+//				WidgetHandler.getInstance().sendClickNotifications(swtWidget);
+//				sendClickNotifications(swtWidget);
 				
 				
-//				Event e = createEvent(swtWidget);
+				Event e1 = createEvent(swtWidget);
+				e1.x = 555;
+				e1.y = 450;
+				WidgetHandler.getInstance().notifyWidget(SWT.MouseDoubleClick, e1, swtWidget);
+//				WidgetHandler.getInstance().sendClickNotifications(swtWidget);
+				notifyWidget(SWT.MouseDoubleClick, e1, swtWidget);
+//				sendClickNotifications(swtWidget);
+//				Event e2 = createEvent(swtWidget, SWT.MouseDown);
+//				e2.x = rectangle.width/3;
+//				e2.y = rectangle.height/2;
+//				WidgetHandler.getInstance().notifyWidget(SWT.MouseDown, e2, swtWidget);
+//				WidgetHandler.getInstance().notifyWidget(SWT.MouseDoubleClick, e1, swtWidget.getParent());
+//				WidgetHandler.getInstance().notifyWidget(SWT.BUTTON1, e1, swtWidget);
+//				notifyWidget(SWT.MouseUp, e1, swtWidget);
+//				
 //				e.x = rectangle.width/2; // here will be a coordinate of "Kubernetes"
 //				e.y = (rectangle.height/16)/2;
 //				WidgetHandler.getInstance().notifyWidget(SWT.MouseDoubleClick, e, swtWidget);
@@ -298,22 +346,46 @@ public class ListHandler extends ControlHandler{
 		});
 		
 		
-		notifyItemMouse(SWT.MouseDoubleClick, 0, swtWidget, null, rectangle.width/2, (rectangle.height/16)/2, 1);
-		
-		Rectangle my_new_rect = rectangle;
+//		notifyItemMouse(SWT.MouseDoubleClick, 0, swtWidget, null, rectangle.width/2, (rectangle.height/16)/2, 1);
+		Point my_new_point = test_point;
+		Rectangle new_rect = rectangle;
+		Rectangle new_rect_area = rectangle_client_area;
+		Rectangle new_rect_parent = rectangle_parent;
+		Rectangle new_rect_display = rectangle_display;
 		int my_item_index = itemIndex;
 	}
 	
-	private static Event createEvent(List swtWidget) {
+//	private static Event createEvent(List swtWidget) {
+//		Event event = new Event();
+//		event.time = (int) System.currentTimeMillis();
+//		event.widget = swtWidget;
+//		event.display = Display.getDisplay();
+//		event.type = SWT.MouseDoubleClick;
+//		event.button = 1;
+//		if(event.type == SWT.MouseDoubleClick){
+//			event.count=2;
+//		}
+//		return event;
+//	}
+	
+	// returns point (x,y) of offset in this StyledText widget.
+//	private Point getLocationAtOffset(final int offset) {
+//		return Display.syncExec(new ResultRunnable<Point>() {
+//
+//			@Override
+//			public Point run() {
+//				return swtWidget.getLocationAtOffset(offset);
+//			}
+//		});
+//	}
+	
+	private static Event createEvent(Widget widget) {
 		Event event = new Event();
 		event.time = (int) System.currentTimeMillis();
-		event.widget = swtWidget;
+		event.widget = widget;
 		event.display = Display.getDisplay();
 		event.type = SWT.MouseDoubleClick;
-		event.button = 1;
-		if(event.type == SWT.MouseDoubleClick){
-			event.count=2;
-		}
+		event.button = 3;
 		return event;
 	}
 }

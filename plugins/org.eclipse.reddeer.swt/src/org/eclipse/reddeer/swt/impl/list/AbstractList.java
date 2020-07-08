@@ -38,9 +38,9 @@ public abstract class AbstractList extends AbstractControl<org.eclipse.swt.widge
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.reddeer.swt.api.List#select(java.lang.String)
+	 * @see org.eclipse.reddeer.swt.api.List#click(java.lang.String)
 	 */
-	public void click(String listItem) { // rework comment
+	public void click(String listItem) { // rework comment----------------------------------
 		ListHandler.getInstance().click(swtWidget,listItem);
 	}
 
